@@ -26,7 +26,7 @@ xe_rsp = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'xe.rsp').to_s
 oracle_rpm_path = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'Disk1/oracle-xe-11.2.0-1.0.x86_64.rpm').to_s
 
 #make sure it's an array. http://www.ruby-doc.org/core-1.9.3/Kernel.html#method-i-Array
-zips_to_extract = Array([node["oracle-11g-ee"][:oracle_zipfile]) 
+zips_to_extract = Array(node["oracle-11g-ee"][:oracle_zipfile]) 
 
 # Install prereq packages
 node["oracle-11g-ee"][:pack_list].each do |pkg|
@@ -72,10 +72,10 @@ template xe_rsp do
 	group 'root'
 	mode '0444'
 	variables({
-		:oracle_http_port => node["oracle-11g-ee"][:oracle_http_port]
-		:oracle_listener_port => node["oracle-11g-ee"][:oracle_listener_port]
-		:oracle_password => node["oracle-11g-ee"][:oracle_password]
-		:oracle_confirm_password => node["oracle-11g-ee"][:oracle_password]
+		:oracle_http_port => node["oracle-11g-ee"][:oracle_http_port],
+		:oracle_listener_port => node["oracle-11g-ee"][:oracle_listener_port],
+		:oracle_password => node["oracle-11g-ee"][:oracle_password],
+		:oracle_confirm_password => node["oracle-11g-ee"][:oracle_password],
 		:oracle_dbenable => node["oracle-11g-ee"][:oracle_dbenable]
 		})
 	action :create_if_missing
@@ -87,7 +87,7 @@ template oracle_rpm_script do
 	group 'root'
 	mode '0755'
 	variables({
-		:oracle_rpm_path => oracle_rpm_path
+		:oracle_rpm_path => oracle_rpm_path,
 		:xe_path => xe_rsp
 		})
 	action :create_if_missing
