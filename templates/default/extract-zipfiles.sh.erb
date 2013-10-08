@@ -1,0 +1,4 @@
+<% @zips_to_extract.each do |zipfile| %>
+unzip <%= zipfile %> -d <%= @extract_to %>
+<% end %>
+
