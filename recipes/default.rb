@@ -56,8 +56,6 @@ template extract_script do
 	notifies :run, "bash[extract-zipfiles]"
 end
 
-template 
-
 # Run the extract script - only runs if notified with :run by extract_script template indicating successful unzip
 bash 'extract-zipfiles' do
 	code extract_script

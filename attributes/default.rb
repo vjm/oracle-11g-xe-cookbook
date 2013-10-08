@@ -1,5 +1,5 @@
 node.default["oracle-11g-ee"][:temp_dir] = "/oracle_tmp"
-node.default["oracle-11g-ee"][:pack_list] = ["libaio", "bc", "flex"]
+node.default["oracle-11g-ee"][:pack_list] = ["libaio", "bc", "flex", "zip", "unzip"]
 
 node.default["oracle-11g-ee"][:oracle_zipfile] = ["/vagrant/oracle-xe-11.2.0-1.0.x86_64.rpm.zip"]
 
