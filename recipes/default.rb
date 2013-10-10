@@ -111,7 +111,7 @@ bash "append-to-bashrc" do
     user "root"
     cwd node["oracle-11g-ee"][:temp_dir]
     code <<-EOT
-       echo ". #{node['oracle-11g-ee'][:oracle_env_path]}" >> /root/.bashrc
+       echo ". #{node['oracle-11g-ee'][:oracle_env_path]}" >> /etc/profile.d/oracle.sh
     EOT
     action :nothing
 end
