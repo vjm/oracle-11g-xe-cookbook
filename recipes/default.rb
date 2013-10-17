@@ -25,9 +25,10 @@
 oracle_rpm_name = 'oracle-xe-11.2.0-1.0.x86_64.rpm'
 # oracle_rpm_script = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'oracle_rpm_install.sh').to_s
 oracle_logs_dir = ((Pathname.new(node["oracle-11g-ee"][:temp_dir])) + '/xe_logs').to_s
-oracle_log_file = oracle_logs_dir + 'XEsilentinstall.log'
+oracle_log_file = oracle_logs_dir + '/XEsilentinstall.log'
 xe_rsp = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'xe.rsp').to_s
-oracle_rpm_path = (File.join(Chef::Config[:file_cache_path], oracle_rpm_name)).to_s
+# oracle_rpm_path = (File.join(Chef::Config[:file_cache_path], oracle_rpm_name)).to_s
+oracle_rpm_path = "#{Chef::Config[:file_cache_path]}/#{oracle_rpm_name}"
 
 #make sure it's an array. http://www.ruby-doc.org/core-1.9.3/Kernel.html#method-i-Array
 # zips_to_extract = Array(node["oracle-11g-ee"][:oracle_zipfile]) 
@@ -37,12 +38,22 @@ node["oracle-11g-ee"][:pack_list].each do |pkg|
 	package pkg
 end
 
-remote_file oracle_rpm_path do
-	source node['oracle-11g-ee'][:rpm_url]
-	owner 'root'
-	group 'root'
-	mode '0644'
-	action :create
+# remote_file oracle_rpm_path do
+# 	source node['oracle-11g-ee'][:rpm_url]
+# 	owner 'root'
+# 	group 'root'
+# 	mode '0644'
+# 	action :create
+# 	notifies :create, "directory[#{node["oracle-11g-ee"][:temp_dir]}]"
+# end
+
+execute 'download-oracle-xe-rpm' do
+	cwd Chef::Config[:file_cache_path]
+	user 'root'
+	command "wget --output-document=#{oracle_rpm_name} #{node['oracle-11g-ee'][:rpm_url]}"
+	creates oracle_rpm_path
+	# notifies :create, "directory[#{node["oracle-11g-ee"][:temp_dir]}]"
+	action :run
 end
 
 # Create temp_dir for oracle ops
@@ -51,7 +62,9 @@ directory node["oracle-11g-ee"][:temp_dir] do
 	owner 'root'
 	group 'root'
 	mode '0644'
-	action :create
+	# action :nothing
+	# action :create
+	notifies :create, "template[#{xe_rsp}]"
 end
 
 # #{xe_rsp} is where this file will be copied to from the 'source'.
@@ -60,7 +73,8 @@ template xe_rsp do
 	owner 'root'
 	group 'root'
 	mode '0444'
-	action :create
+	notifies :create, "directory[#{oracle_logs_dir}]"
+	action :nothing
 end
 
 # Create temp_dir for oracle logs
@@ -69,13 +83,16 @@ directory oracle_logs_dir do
 	owner 'root'
 	group 'root'
 	mode '0644'
-	action :create
+	action :nothing
+	notifies :run, "execute[oracle-xe-rpm]"
 end
 
 # we use this instead of package because we want to log our output to this file.
-execute 'oracle-xe-rpm'
+execute 'oracle-xe-rpm' do
+	user 'root'
 	command "rpm -ivh #{oracle_rpm_path} > #{oracle_log_file}"
-	notifies :run, "execute['configure-oracle']"
+	action :nothing
+	notifies :run, "execute[configure-oracle]"
 end
 
 # package 'oracle-xe' do
@@ -84,13 +101,16 @@ end
 # end
 
 execute 'configure-oracle' do
+	user 'root'
 	command "/etc/init.d/oracle-xe configure responseFile=#{xe_rsp} >> #{oracle_log_file}"
 	creates "/u01/app/oracle/oradata"
 	action :nothing # only runs if execute['oracle-xe-rpm'] runs properly
+	notifies :create, "link[/etc/profile.d/oracle_env.sh]"
 	returns [0,1] # don't care if it's already configured
 end
 
 link "/etc/profile.d/oracle_env.sh" do
-  to node["oracle-11g-ee"][:oracle_env_path]
-  action :create
+	user 'root'
+	to node["oracle-11g-ee"][:oracle_env_path]
+	action :nothing
 end
