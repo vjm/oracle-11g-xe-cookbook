@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 
-# http://docs.oracle.com/cd/E17781_01/install.112/e18802/toc.htm#BABCCGCF
 # https://gist.github.com/ricardovf/1005206
 
 # extract_script = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'extract-zipfiles.sh').to_s

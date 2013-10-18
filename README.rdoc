@@ -6,3 +6,8 @@
 
 = USAGE:
 
+http://www.thegeekstuff.com/2009/01/oracle-database-startup-and-shutdown-procedure/
+
+http://www.thegeekstuff.com/2009/05/oracle-lsnrctl-listener-shutdown-and-startup-procedures/
+
+http://docs.oracle.com/cd/E17781_01/install.112/e18802/toc.htm#BABCCGCF
