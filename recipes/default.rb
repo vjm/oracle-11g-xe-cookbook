@@ -113,3 +113,8 @@ link "/etc/profile.d/oracle_env.sh" do
 	to node["oracle-11g-ee"][:oracle_env_path]
 	action :nothing
 end
+
+execute 'configure-ip-tables' do
+	user 'root'
+	command "echo '-A INPUT -m state --state NEW -m tcp -p tcp --dport #{node['oracle-11g-ee'][:oracle_listener_port]} -j ACCEPT' >> /etc/sysconfig/iptables"
+end
