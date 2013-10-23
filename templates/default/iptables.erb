@@ -12,5 +12,3 @@
 -A FORWARD -j REJECT --reject-with icmp-host-prohibited
 -A INPUT -m state --state NEW -m tcp -p tcp --dport <%= node['oracle-11g-ee'][:oracle_http_port] %> -j ACCEPT
 COMMIT
-
-<!-- -A INPUT -m state --state NEW -m tcp -p tcp --dport 1521 -j ACCEPT -->

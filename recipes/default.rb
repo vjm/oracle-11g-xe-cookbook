@@ -114,6 +114,12 @@ link "/etc/profile.d/oracle_env.sh" do
 	user 'root'
 	to node["oracle-11g-ee"][:oracle_env_path]
 	action :nothing
+	notifies :create "cookbook_file[#{allow_remote_oracle_access}]"
+	notifies :delete "cookbook_file[#{listener_ora}]"
+	notifies :delete "cookbook_file[#{tnsnames_ora}]"
+	notifies :create "cookbook_file[#{listener_ora}]"
+	notifies :create "cookbook_file[#{tnsnames_ora}]"
+	notifies :run "execute[start-listener]"
 end
 
 # add to oracle_env.sh:
@@ -126,6 +132,7 @@ cookbook_file allow_remote_oracle_access do
   mode 0600
   owner "root"
   group "root"
+  action :nothing
   notifies :run, "execute[allow-remote-oracle-access]"
 end
 
@@ -148,6 +155,12 @@ bash 'iptables-setup' do
 	user 'root'
 	code iptables
 	action :nothing # only runs if notified
+	notifies :restart "service[iptables]"
+end
+
+service 'iptables' do
+	supports :restart => true
+	action :nothing
 end
 
 cookbook_file listener_ora do
@@ -156,6 +169,7 @@ cookbook_file listener_ora do
   mode 0755
   owner "oracle"
   group "dba"
+  action :nothing # only runs if notified
   # notifies :create, "cookbook_file[#{listener_ora}]"
 end
 
@@ -165,7 +179,14 @@ cookbook_file tnsnames_ora do
   mode 0755
   owner "oracle"
   group "dba"
+  action :nothing # only runs if notified
   # notifies :create, "cookbook_file[#{listener_ora}]"
+end
+
+execute "start-listener" do
+	user 'root'
+	command "lsnrctl start"
+	action :nothing # only runs if notified
 end
 
 # cookbook_file "create-#{listener_ora}" do
