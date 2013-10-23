@@ -22,12 +22,14 @@
 # extract_script = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'extract-zipfiles.sh').to_s
 
 oracle_rpm_name = 'oracle-xe-11.2.0-1.0.x86_64.rpm'
-# oracle_rpm_script = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'oracle_rpm_install.sh').to_s
 oracle_logs_dir = ((Pathname.new(node["oracle-11g-ee"][:temp_dir])) + '/xe_logs').to_s
 oracle_log_file = oracle_logs_dir + '/XEsilentinstall.log'
 xe_rsp = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'xe.rsp').to_s
-# oracle_rpm_path = (File.join(Chef::Config[:file_cache_path], oracle_rpm_name)).to_s
+allow_remote_oracle_access = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'allow-remote-oracle-access.sql').to_s
 oracle_rpm_path = "#{Chef::Config[:file_cache_path]}/#{oracle_rpm_name}"
+iptables = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'iptables_setup.sh').to_s
+listener_ora = "/u01/app/oracle/product/11.2.0/xe/network/admin/listener.ora"
+tnsnames_ora = "/u01/app/oracle/product/11.2.0/xe/network/admin/tnsnames.ora"
 
 #make sure it's an array. http://www.ruby-doc.org/core-1.9.3/Kernel.html#method-i-Array
 # zips_to_extract = Array(node["oracle-11g-ee"][:oracle_zipfile]) 
@@ -114,7 +116,77 @@ link "/etc/profile.d/oracle_env.sh" do
 	action :nothing
 end
 
-execute 'configure-ip-tables' do
-	user 'root'
-	command "echo '-A INPUT -m state --state NEW -m tcp -p tcp --dport #{node['oracle-11g-ee'][:oracle_listener_port]} -j ACCEPT' >> /etc/sysconfig/iptables"
+# add to oracle_env.sh:
+# export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+# export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+# export SQLPATH=$ORACLE_HOME/sqlplus/admin
+
+cookbook_file allow_remote_oracle_access do
+  source "allow-remote-oracle-access.sql"
+  mode 0600
+  owner "root"
+  group "root"
+  notifies :run, "execute[allow-remote-oracle-access]"
 end
+
+execute 'allow-remote-oracle-access' do
+	user 'root'
+	command "sqlplus system/#{node['oracle-11g-ee'][:oracle_password]} < #{allow_remote_oracle_access}"
+	action :nothing # only runs if notified
+end
+
+template iptables do 
+	source 'iptables_setup.sh.erb'
+	owner 'root'
+	group 'root'
+	mode '0700'
+	notifies :run, "execute[iptables-setup]"
+	# action :nothing
+end
+
+bash 'iptables-setup' do
+	user 'root'
+	code iptables
+	action :nothing # only runs if notified
+end
+
+cookbook_file listener_ora do
+  action :create
+  source "listener.ora"
+  mode 0755
+  owner "oracle"
+  group "dba"
+  # notifies :create, "cookbook_file[#{listener_ora}]"
+end
+
+cookbook_file tnsnames_ora do
+  action :create
+  source "tnsnames.ora"
+  mode 0755
+  owner "oracle"
+  group "dba"
+  # notifies :create, "cookbook_file[#{listener_ora}]"
+end
+
+# cookbook_file "create-#{listener_ora}" do
+#   source "listener.ora"
+#   mode 0755
+#   owner "oracle"
+#   group "dba"
+#   notifies :run, "execute[allow-remote-oracle-access]"
+# end
+
+
+
+# try changing the host in the listener.ora and tsnnames.ora to be 192.168.33.10!!!!!!!!!!!!!!!!!!!
+# if you can telnet 192.168.33.10 1521 then youre on your way.
+
+# http://stackoverflow.com/questions/5661610/tns-12505-tnslistener-does-not-currently-know-of-sid-given-in-connect-descript/10840177#10840177
+# listener.ora Network Configuration File:
+
+
+# http://www.centos.org/docs/4/4.5/Security_Guide/s1-firewall-ipt-basic.html
+# http://stackoverflow.com/questions/9029297/how-to-know-if-a-port-is-open-or-not-in-linux-system
+# http://stackoverflow.com/questions/9609130/quick-way-to-find-if-a-port-is-open-on-linux
+# /etc/init.d/iptables stop
+# chkconfig iptables off

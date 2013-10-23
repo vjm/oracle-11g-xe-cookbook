@@ -1,10 +1,21 @@
 = DESCRIPTION:
 
+there is a default listener : /u01/app/oracle/product/11.2.0/xe/network/admin
+
 = REQUIREMENTS:
+
 
 = ATTRIBUTES: 
 
 = USAGE:
+
+= TODO:
+--set iptables port access
+--make the hostname of the oracle listeners configurable so that it doesn't have to be hardcoded to "localhost"
+--manage the entire listener and tnsnames?
+--http://docs.oracle.com/cd/E17781_01/install.112/e18802/toc.htm#autoId17
+
+= LINKS:
 
 http://www.thegeekstuff.com/2009/01/oracle-database-startup-and-shutdown-procedure/
 
@@ -19,3 +30,7 @@ http://docs.oracle.com/cd/B19306_01/network.102/b14212/connect.htm
 https://forums.oracle.com/thread/522405
 
 http://www.dba-oracle.com/t_create_sqlnet_ora.htm
+
+http://www.oracle.com/technetwork/community/developer-vm/index.html
+
+http://www.onlineconversion.com/html_chmod_calculator.htm
