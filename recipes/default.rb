@@ -114,12 +114,12 @@ link "/etc/profile.d/oracle_env.sh" do
 	user 'root'
 	to node["oracle-11g-ee"][:oracle_env_path]
 	action :nothing
-	notifies :create "cookbook_file[#{allow_remote_oracle_access}]"
-	notifies :delete "cookbook_file[#{listener_ora}]"
-	notifies :delete "cookbook_file[#{tnsnames_ora}]"
-	notifies :create "cookbook_file[#{listener_ora}]"
-	notifies :create "cookbook_file[#{tnsnames_ora}]"
-	notifies :run "execute[start-listener]"
+	notifies :create, "cookbook_file[#{allow_remote_oracle_access}]"
+	notifies :delete, "cookbook_file[#{listener_ora}]"
+	notifies :delete, "cookbook_file[#{tnsnames_ora}]"
+	notifies :create, "cookbook_file[#{listener_ora}]"
+	notifies :create, "cookbook_file[#{tnsnames_ora}]"
+	notifies :run, "execute[start-listener]"
 end
 
 # add to oracle_env.sh:
@@ -138,7 +138,7 @@ end
 
 execute 'allow-remote-oracle-access' do
 	user 'root'
-	command "sqlplus system/#{node['oracle-11g-ee'][:oracle_password]} < #{allow_remote_oracle_access}"
+	command ". /u01/app/oracle/product/11.2.0/xe/bin/oracle_env.sh; sqlplus system/#{node['oracle-11g-ee'][:oracle_password]} < #{allow_remote_oracle_access}"
 	action :nothing # only runs if notified
 end
 
@@ -155,7 +155,7 @@ bash 'iptables-setup' do
 	user 'root'
 	code iptables
 	action :nothing # only runs if notified
-	notifies :restart "service[iptables]"
+	notifies :restart, "service[iptables]"
 end
 
 service 'iptables' do
@@ -184,8 +184,8 @@ cookbook_file tnsnames_ora do
 end
 
 execute "start-listener" do
-	user 'root'
-	command "lsnrctl start"
+	user 'oracle'
+	command ". /u01/app/oracle/product/11.2.0/xe/bin/oracle_env.sh; lsnrctl start"
 	action :nothing # only runs if notified
 end
 

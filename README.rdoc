@@ -10,10 +10,12 @@ there is a default listener : /u01/app/oracle/product/11.2.0/xe/network/admin
 = USAGE:
 
 = TODO:
---set iptables port access
---make the hostname of the oracle listeners configurable so that it doesn't have to be hardcoded to "localhost"
---manage the entire listener and tnsnames?
---http://docs.oracle.com/cd/E17781_01/install.112/e18802/toc.htm#autoId17
+--set iptables port access rather than allowing all connections
+--manage the entire listener and tnsnames, and use the ip of the machine instead of "localhost", otherwise remote access doesn't seem to work.
+-- "No such file or directory - lsnrctl start" because environment variables aren't getting set correctly. we also need to run this as the oracle user. http://docs.oracle.com/cd/E17781_01/install.112/e18802/toc.htm#autoId17
+-- "sqlplus: command not found" because environment variables aren't getting set correctly. see above
+
+-- better chaining and notifications within the provisioning. we should be able to run vagrant provision as many times as we want and be fresh.
 
 = LINKS:
 
