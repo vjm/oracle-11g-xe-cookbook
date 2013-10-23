@@ -140,7 +140,7 @@ template iptables do
 	owner 'root'
 	group 'root'
 	mode '0700'
-	notifies :run, "execute[iptables-setup]"
+	notifies :run, "bash[iptables-setup]"
 	# action :nothing
 end
 
