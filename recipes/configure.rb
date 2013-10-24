@@ -39,7 +39,7 @@ link "/etc/profile.d/oracle_env.sh" do
 	notifies :delete, "template[#{node['oracle-11g-ee'][:tnsnames]}]"
 	notifies :create, "template[#{node['oracle-11g-ee'][:listener_ora]}]"
 	notifies :create, "template[#{node['oracle-11g-ee'][:tnsnames]}]"
-	notifies :run, "execute[start-listener]"
+	# notifies :run, "execute[start-listener]" #seems like it's already started now
 end
 
 template listener_ora do
