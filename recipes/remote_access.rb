@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: oracle-11g-ee
-# Recipe:: default
+# Recipe:: remote_access
 #
 # Author:: Mike Ensor (<mike.ensor@acquitygroup.com>)
 # Author:: Vince Montalbano (<vince.montalbano@acquitygroup.com>)
@@ -20,21 +20,22 @@
 # limitations under the License.
 #
 
-ruby_block 'get-hostname' do
-  block do
-    node['oracle-11g-ee'][:hostname] = `hostname`
-  end
-  action :run
+allow_remote_oracle_access = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'allow-remote-oracle-access.sql').to_s
+
+cookbook_file allow_remote_oracle_access do
+  source "allow-remote-oracle-access.sql"
+  mode 0600
+  owner "root"
+  group "root"
+  # action :nothing
+  action :create_if_missing
+  # creates allow_remote_oracle_access
+  # notifies :run, "execute[allow-remote-oracle-access]"
 end
 
-ruby_block 'get-host-only-ip-address' do
-  block do
-    node['oracle-11g-ee'][:host_only_ip] = `ifconfig #{node['oracle-11g-ee'][:host_only_interface]} | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'`
-  end
-  action :run
+execute 'allow-remote-oracle-access' do
+	user 'root'
+	command ". /u01/app/oracle/product/11.2.0/xe/bin/oracle_env.sh; sqlplus system/#{node['oracle-11g-ee'][:oracle_password]} < #{allow_remote_oracle_access}"
+	# action :nothing # only runs if notified
+	only_if { File.exists?(allow_remote_oracle_access) }
 end
-
-include_recipe "oracle-11g-ee::iptables"
-include_recipe "oracle-11g-ee::install"
-include_recipe "oracle-11g-ee::configure"
-include_recipe "oracle-11g-ee::remote_access"

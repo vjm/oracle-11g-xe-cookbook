@@ -3,7 +3,12 @@ maintainer_email "vince.montalbano@acquitygroup.com"
 license          "Apache 2.0"
 description      "Installs/Configures Oracle 11g Express Edition via Chef on CentOS"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
-version          "0.3"
+version          "0.4"
 
+recipe "chef-oracle-11g-ee", "Includes the service recipe by default."
 
-# depends "iptables"
+%w{ centos }.each do |os|
+  supports os
+end
+
+depends "iptables"

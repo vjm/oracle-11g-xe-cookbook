@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: oracle-11g-ee
-# Recipe:: default
+# Recipe:: iptables
 #
 # Author:: Mike Ensor (<mike.ensor@acquitygroup.com>)
 # Author:: Vince Montalbano (<vince.montalbano@acquitygroup.com>)
@@ -20,21 +20,25 @@
 # limitations under the License.
 #
 
-ruby_block 'get-hostname' do
-  block do
-    node['oracle-11g-ee'][:hostname] = `hostname`
-  end
-  action :run
+iptables = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'iptables_setup.sh').to_s
+
+template iptables do 
+	source 'iptables_setup.sh.erb'
+	owner 'root'
+	group 'root'
+	mode '0700'
+	notifies :run, "bash[iptables-setup]"
+	action :create
 end
 
-ruby_block 'get-host-only-ip-address' do
-  block do
-    node['oracle-11g-ee'][:host_only_ip] = `ifconfig #{node['oracle-11g-ee'][:host_only_interface]} | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'`
-  end
-  action :run
+bash 'iptables-setup' do
+	user 'root'
+	code iptables
+	action :nothing # only runs if notified
+	notifies :restart, "service[iptables]"
 end
 
-include_recipe "oracle-11g-ee::iptables"
-include_recipe "oracle-11g-ee::install"
-include_recipe "oracle-11g-ee::configure"
-include_recipe "oracle-11g-ee::remote_access"
+service 'iptables' do
+	supports :restart => true
+	action :nothing
+end

@@ -13,7 +13,8 @@ iptables -A INPUT -p tcp --dport 22 -j ACCEPT
 #
 # Set default policies for INPUT, FORWARD and OUTPUT chains
 #
-iptables -P INPUT ACCEPT
+# iptables -P INPUT ACCEPT #brute force approach
+-A INPUT -m state --state NEW -m tcp -p tcp --dport <%= node['oracle-11g-ee'][:oracle_http_port] %> -j ACCEPT
 iptables -P FORWARD ACCEPT
 iptables -P OUTPUT ACCEPT
 #

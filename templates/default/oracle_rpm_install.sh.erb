@@ -1,4 +1,0 @@
-#!/bin/bash
-mkdir /xe_logs
-rpm -ivh  <%= @oracle_rpm_path %> > /xe_logs/XEsilentinstall.log
-/etc/init.d/oracle-xe configure responseFile=<%= @xe_path %> >> /xe_logs/XEsilentinstall.log
