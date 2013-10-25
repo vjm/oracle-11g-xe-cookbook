@@ -26,7 +26,7 @@ execute 'configure-oracle' do
 	user 'root'
 	command "#{node['oracle-11g-ee'][:oracle_daemon]} configure responseFile=#{node['oracle-11g-ee'][:xe_rsp]} >> #{node['oracle-11g-ee'][:oracle_log_file]}"
 	creates "/u01/app/oracle/oradata"
-	action :nothing # only runs if execute['oracle-xe-rpm'] runs properly
+	# action :nothing # only runs if execute['oracle-xe-rpm'] runs properly
 	notifies :create, "link[/etc/profile.d/oracle_env.sh]"
 	returns [0,1] # don't care if it's already configured
 end

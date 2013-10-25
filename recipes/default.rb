@@ -45,6 +45,5 @@ node.normal['oracle-11g-ee'][:oracle_rpm_path] = "#{Chef::Config[:file_cache_pat
 
 
 include_recipe "oracle-11g-ee::install"
-include_recipe "oracle-11g-ee::iptables"
 include_recipe "oracle-11g-ee::configure"
 include_recipe "oracle-11g-ee::remote_access"

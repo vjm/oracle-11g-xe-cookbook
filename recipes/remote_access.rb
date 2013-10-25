@@ -20,6 +20,8 @@
 # limitations under the License.
 #
 
+include_recipe "oracle-11g-ee::iptables"
+
 allow_remote_oracle_access = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'allow-remote-oracle-access.sql').to_s
 
 cookbook_file allow_remote_oracle_access do

@@ -87,7 +87,7 @@ end
 execute 'oracle-xe-rpm' do
 	user 'root'
 	command "rpm -ivh #{node['oracle-11g-ee'][:oracle_rpm_path]} > #{node['oracle-11g-ee'][:oracle_log_file]}"
-	notifies :run, "execute[configure-oracle]"
+	# notifies :run, "execute[configure-oracle]"
 	# not_if do
 	# 	File.exists?(node['oracle-11g-ee'][:oracle_daemon])
 	# end
