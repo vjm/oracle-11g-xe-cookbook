@@ -24,7 +24,7 @@
 
 execute 'configure-oracle' do
 	user 'root'
-	command "#{node['oracle-11g-ee'][:oracle_daemon]} configure responseFile=#{xe_rsp} >> #{oracle_log_file}"
+	command "#{node['oracle-11g-ee'][:oracle_daemon]} configure responseFile=#{node['oracle-11g-ee'][:xe_rsp]} >> #{node['oracle-11g-ee'][:oracle_log_file]}"
 	creates "/u01/app/oracle/oradata"
 	action :nothing # only runs if execute['oracle-xe-rpm'] runs properly
 	notifies :create, "link[/etc/profile.d/oracle_env.sh]"
@@ -36,13 +36,13 @@ link "/etc/profile.d/oracle_env.sh" do
 	to node["oracle-11g-ee"][:oracle_env_path]
 	action :nothing
 	notifies :delete, "template[#{node['oracle-11g-ee'][:listener_ora]}]"
-	notifies :delete, "template[#{node['oracle-11g-ee'][:tnsnames]}]"
+	notifies :delete, "template[#{node['oracle-11g-ee'][:tnsnames_ora]}]"
 	notifies :create, "template[#{node['oracle-11g-ee'][:listener_ora]}]"
-	notifies :create, "template[#{node['oracle-11g-ee'][:tnsnames]}]"
+	notifies :create, "template[#{node['oracle-11g-ee'][:tnsnames_ora]}]"
 	# notifies :run, "execute[start-listener]" #seems like it's already started now
 end
 
-template listener_ora do
+template node['oracle-11g-ee'][:listener_ora] do
   action :create
   source "listener.ora.erb"
   mode 0755
@@ -51,7 +51,7 @@ template listener_ora do
   action :nothing # only runs if notified
 end
 
-template tnsnames_ora do
+template node['oracle-11g-ee'][:tnsnames_ora] do
   action :create
   source "tnsnames.ora.erb"
   mode 0755

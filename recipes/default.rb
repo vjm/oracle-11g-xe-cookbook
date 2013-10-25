@@ -22,19 +22,29 @@
 
 ruby_block 'get-hostname' do
   block do
-    node['oracle-11g-ee'][:hostname] = `hostname`
+    node.automatic['oracle-11g-ee'][:hostname] = `hostname`
   end
   action :run
 end
 
 ruby_block 'get-host-only-ip-address' do
   block do
-    node['oracle-11g-ee'][:host_only_ip] = `ifconfig #{node['oracle-11g-ee'][:host_only_interface]} | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'`
+    node.automatic['oracle-11g-ee'][:host_only_ip] = `ifconfig #{node['oracle-11g-ee'][:host_only_interface]} | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'`
   end
   action :run
 end
 
-include_recipe "oracle-11g-ee::iptables"
+node.normal['oracle-11g-ee'][:iptables] = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'iptables_setup.sh').to_s
+
+node.normal['oracle-11g-ee'][:xe_rsp] = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'xe.rsp').to_s
+
+node.normal['oracle-11g-ee'][:oracle_logs_dir] = ((Pathname.new(node["oracle-11g-ee"][:temp_dir])) + '/xe_logs').to_s
+node.normal['oracle-11g-ee'][:oracle_log_file] = node['oracle-11g-ee'][:oracle_logs_dir] + '/XEsilentinstall.log'
+
+node.normal['oracle-11g-ee'][:oracle_rpm_path] = "#{Chef::Config[:file_cache_path]}/#{node['oracle-11g-ee'][:oracle_rpm_name]}"
+
+
 include_recipe "oracle-11g-ee::install"
+include_recipe "oracle-11g-ee::iptables"
 include_recipe "oracle-11g-ee::configure"
 include_recipe "oracle-11g-ee::remote_access"

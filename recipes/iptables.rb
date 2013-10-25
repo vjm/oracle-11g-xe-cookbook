@@ -20,9 +20,7 @@
 # limitations under the License.
 #
 
-iptables = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'iptables_setup.sh').to_s
-
-template iptables do 
+template node['oracle-11g-ee'][:iptables] do 
 	source 'iptables_setup.sh.erb'
 	owner 'root'
 	group 'root'
@@ -33,7 +31,7 @@ end
 
 bash 'iptables-setup' do
 	user 'root'
-	code iptables
+	code node['oracle-11g-ee'][:iptables]
 	action :nothing # only runs if notified
 	notifies :restart, "service[iptables]"
 end
