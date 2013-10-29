@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: oracle-11g-ee
+# Cookbook Name:: oracle-11g-xe
 # Recipe:: configure
 #
 # Author:: Mike Ensor (<mike.ensor@acquitygroup.com>)
@@ -24,25 +24,25 @@
 
 execute 'configure-oracle' do
 	user 'root'
-	command "#{node['oracle-11g-ee'][:oracle_daemon]} configure responseFile=#{node['oracle-11g-ee'][:xe_rsp]} >> #{node['oracle-11g-ee'][:oracle_log_file]}"
+	command "#{node['oracle-11g-xe'][:oracle_daemon]} configure responseFile=#{node['oracle-11g-xe'][:xe_rsp]} >> #{node['oracle-11g-xe'][:oracle_log_file]}"
 	creates "/u01/app/oracle/oradata"
 	# action :nothing # only runs if execute['oracle-xe-rpm'] runs properly
-	notifies :create, "link[/etc/profile.d/oracle_env.sh]"
+	# notifies :create, "link[/etc/profile.d/oracle_env.sh]"
 	returns [0,1] # don't care if it's already configured
 end
 
-link "/etc/profile.d/oracle_env.sh" do
+link "/etc/rc.d/rc3.d/S99oracle" do
 	user 'root'
-	to node["oracle-11g-ee"][:oracle_env_path]
-	action :nothing
-	notifies :delete, "template[#{node['oracle-11g-ee'][:listener_ora]}]"
-	notifies :delete, "template[#{node['oracle-11g-ee'][:tnsnames_ora]}]"
-	notifies :create, "template[#{node['oracle-11g-ee'][:listener_ora]}]"
-	notifies :create, "template[#{node['oracle-11g-ee'][:tnsnames_ora]}]"
+	to node["oracle-11g-xe"][:oracle_env_path]
+	# action :nothing
+	notifies :delete, "template[#{node['oracle-11g-xe'][:listener_ora]}]"
+	notifies :delete, "template[#{node['oracle-11g-xe'][:tnsnames_ora]}]"
+	notifies :create, "template[#{node['oracle-11g-xe'][:listener_ora]}]"
+	notifies :create, "template[#{node['oracle-11g-xe'][:tnsnames_ora]}]"
 	# notifies :run, "execute[start-listener]" #seems like it's already started now
 end
 
-template node['oracle-11g-ee'][:listener_ora] do
+template node['oracle-11g-xe'][:listener_ora] do
   action :create
   source "listener.ora.erb"
   mode 0755
@@ -51,7 +51,7 @@ template node['oracle-11g-ee'][:listener_ora] do
   action :nothing # only runs if notified
 end
 
-template node['oracle-11g-ee'][:tnsnames_ora] do
+template node['oracle-11g-xe'][:tnsnames_ora] do
   action :create
   source "tnsnames.ora.erb"
   mode 0755
@@ -63,7 +63,7 @@ end
 
 execute "start-listener" do
 	user 'oracle'
-	command ". #{node["oracle-11g-ee"][:oracle_env_path]}; lsnrctl start"
+	command ". #{node["oracle-11g-xe"][:oracle_env_path]}; lsnrctl start"
 	action :nothing # only runs if notified
 end
 

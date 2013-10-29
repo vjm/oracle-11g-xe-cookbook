@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: oracle-11g-ee
+# Cookbook Name:: oracle-11g-xe
 # Recipe:: remote_access
 #
 # Author:: Mike Ensor (<mike.ensor@acquitygroup.com>)
@@ -20,9 +20,9 @@
 # limitations under the License.
 #
 
-include_recipe "oracle-11g-ee::iptables"
+include_recipe "oracle-11g-xe::iptables"
 
-allow_remote_oracle_access = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'allow-remote-oracle-access.sql').to_s
+allow_remote_oracle_access = (Pathname.new(node["oracle-11g-xe"][:temp_dir]) + 'allow-remote-oracle-access.sql').to_s
 
 cookbook_file allow_remote_oracle_access do
   source "allow-remote-oracle-access.sql"
@@ -37,7 +37,7 @@ end
 
 execute 'allow-remote-oracle-access' do
 	user 'root'
-	command ". /u01/app/oracle/product/11.2.0/xe/bin/oracle_env.sh; sqlplus system/#{node['oracle-11g-ee'][:oracle_password]} < #{allow_remote_oracle_access}"
+	command ". /u01/app/oracle/product/11.2.0/xe/bin/oracle_env.sh; sqlplus system/#{node['oracle-11g-xe'][:oracle_password]} < #{allow_remote_oracle_access}"
 	# action :nothing # only runs if notified
 	only_if { File.exists?(allow_remote_oracle_access) }
 end

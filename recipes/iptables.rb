@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: oracle-11g-ee
+# Cookbook Name:: oracle-11g-xe
 # Recipe:: iptables
 #
 # Author:: Mike Ensor (<mike.ensor@acquitygroup.com>)
@@ -20,7 +20,7 @@
 # limitations under the License.
 #
 
-template node['oracle-11g-ee'][:iptables] do 
+template node['oracle-11g-xe'][:iptables] do 
 	source 'iptables_setup.sh.erb'
 	owner 'root'
 	group 'root'
@@ -31,7 +31,7 @@ end
 
 bash 'iptables-setup' do
 	user 'root'
-	code node['oracle-11g-ee'][:iptables]
+	code node['oracle-11g-xe'][:iptables]
 	action :nothing # only runs if notified
 	notifies :restart, "service[iptables]"
 end

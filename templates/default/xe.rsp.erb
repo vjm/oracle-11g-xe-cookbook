@@ -4,7 +4,7 @@
 # Default : 8080                                                              #
 #                                                                             #
 ###############################################################################
-ORACLE_HTTP_PORT=<%= node['oracle-11g-ee'][:oracle_http_port] %>
+ORACLE_HTTP_PORT=<%= node['oracle-11g-xe'][:oracle_http_port] -%>
 
 ###############################################################################
 #                                                                             #
@@ -12,7 +12,7 @@ ORACLE_HTTP_PORT=<%= node['oracle-11g-ee'][:oracle_http_port] %>
 # Default : 1521                                                              #
 #                                                                             #
 ###############################################################################
-ORACLE_LISTENER_PORT=<%= node['oracle-11g-ee'][:oracle_listener_port] %>
+ORACLE_LISTENER_PORT=<%= node['oracle-11g-xe'][:oracle_listener_port] -%>
 
 ###############################################################################
 #                                                                             #
@@ -22,7 +22,7 @@ ORACLE_LISTENER_PORT=<%= node['oracle-11g-ee'][:oracle_listener_port] %>
 #   SYSTEM                                                                    #
 #                                                                             #
 ###############################################################################
-ORACLE_PASSWORD=<%= node['oracle-11g-ee'][:oracle_password] %>
+ORACLE_PASSWORD=<%= node['oracle-11g-xe'][:oracle_password] -%>
 
 ###############################################################################
 #                                                                             #
@@ -34,11 +34,11 @@ ORACLE_PASSWORD=<%= node['oracle-11g-ee'][:oracle_password] %>
 #   ORACLE_CONFIRM_PASSWORD should be same as ORACLE_PASSWORD                 #
 #                                                                             #
 ###############################################################################
-ORACLE_CONFIRM_PASSWORD=<%= node['oracle-11g-ee'][:oracle_password] %>
+ORACLE_CONFIRM_PASSWORD=<%= node['oracle-11g-xe'][:oracle_password] -%>
 
 ###############################################################################
 #                                                                             #
 # To start/stop listener and database instance up on system boot              #
 #                                                                             #
 ###############################################################################
-ORACLE_DBENABLE=<%= node['oracle-11g-ee'][:oracle_dbenable] ? 'y' : 'n' %>
+ORACLE_DBENABLE=<%= node['oracle-11g-xe'][:oracle_dbenable] ? 'y' : 'n' -%>

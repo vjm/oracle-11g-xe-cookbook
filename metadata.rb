@@ -5,7 +5,7 @@ description      "Installs/Configures Oracle 11g Express Edition via Chef on Cen
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
 version          "0.4"
 
-recipe "chef-oracle-11g-ee", "Includes the service recipe by default."
+recipe "chef-oracle-11g-xe", "Includes the service recipe by default."
 
 %w{ centos }.each do |os|
   supports os

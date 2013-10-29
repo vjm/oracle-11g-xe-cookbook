@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: oracle-11g-ee
+# Cookbook Name:: oracle-11g-xe
 # Recipe:: install
 #
 # Author:: Mike Ensor (<mike.ensor@acquitygroup.com>)
@@ -24,61 +24,61 @@
 
 
 #make sure it's an array. http://www.ruby-doc.org/core-1.9.3/Kernel.html#method-i-Array
-# zips_to_extract = Array(node["oracle-11g-ee"][:oracle_zipfile]) 
+# zips_to_extract = Array(node["oracle-11g-xe"][:oracle_zipfile]) 
 
 # Install prereq packages
-node["oracle-11g-ee"][:pack_list].each do |pkg|
+node["oracle-11g-xe"][:pack_list].each do |pkg|
 	package pkg
 end
 
 # remote_file oracle_rpm_path do
-# 	source node['oracle-11g-ee'][:rpm_url]
+# 	source node['oracle-11g-xe'][:rpm_url]
 # 	owner 'root'
 # 	group 'root'
 # 	mode '0644'
 # 	action :create
-# 	notifies :create, "directory[#{node["oracle-11g-ee"][:temp_dir]}]"
+# 	notifies :create, "directory[#{node["oracle-11g-xe"][:temp_dir]}]"
 # end
 
 execute 'download-oracle-xe-rpm' do
 	cwd Chef::Config[:file_cache_path]
 	user 'root'
-	command "wget --output-document=#{node['oracle-11g-ee'][:oracle_rpm_name]} #{node['oracle-11g-ee'][:rpm_url]}"
-	creates node['oracle-11g-ee'][:oracle_rpm_path]
-	# notifies :create, "directory[#{node["oracle-11g-ee"][:temp_dir]}]"
+	command "wget --output-document=#{node['oracle-11g-xe'][:oracle_rpm_name]} #{node['oracle-11g-xe'][:rpm_url]}"
+	creates node['oracle-11g-xe'][:oracle_rpm_path]
+	# notifies :create, "directory[#{node["oracle-11g-xe"][:temp_dir]}]"
 	action :run
 end
 
 # Create temp_dir for oracle ops
-directory node["oracle-11g-ee"][:temp_dir] do
+directory node["oracle-11g-xe"][:temp_dir] do
 	recursive true
 	owner 'root'
 	group 'root'
 	mode '0644'
-	# creates node["oracle-11g-ee"][:temp_dir]
+	# creates node["oracle-11g-xe"][:temp_dir]
 	# action :nothing
 	# action :create
-	# notifies :create, "template[#{node['oracle-11g-ee'][:xe_rsp]}]"
+	# notifies :create, "template[#{node['oracle-11g-xe'][:xe_rsp]}]"
 end
 
-# #{node['oracle-11g-ee'][:xe_rsp]} is where this file will be copied to from the 'source'.
-template node['oracle-11g-ee'][:xe_rsp] do 
+# #{node['oracle-11g-xe'][:xe_rsp]} is where this file will be copied to from the 'source'.
+template node['oracle-11g-xe'][:xe_rsp] do 
 	source 'xe.rsp.erb'
 	owner 'root'
 	group 'root'
 	mode '0444'
-	# creates node['oracle-11g-ee'][:xe_rsp]
-	# notifies :create, "directory[#{node['oracle-11g-ee'][:oracle_logs_dir]}]"
+	# creates node['oracle-11g-xe'][:xe_rsp]
+	# notifies :create, "directory[#{node['oracle-11g-xe'][:oracle_logs_dir]}]"
 	action :create_if_missing
 end
 
 # Create temp_dir for oracle logs
-directory node['oracle-11g-ee'][:oracle_logs_dir] do
+directory node['oracle-11g-xe'][:oracle_logs_dir] do
 	recursive true
 	owner 'root'
 	group 'root'
 	mode '0644'
-	# creates node['oracle-11g-ee'][:oracle_logs_dir]
+	# creates node['oracle-11g-xe'][:oracle_logs_dir]
 	# action :nothing
 	# notifies :run, "execute[oracle-xe-rpm]"
 end
@@ -86,10 +86,10 @@ end
 # we use this instead of package because we want to log our output to this file.
 execute 'oracle-xe-rpm' do
 	user 'root'
-	command "rpm -ivh #{node['oracle-11g-ee'][:oracle_rpm_path]} > #{node['oracle-11g-ee'][:oracle_log_file]}"
+	command "rpm -ivh #{node['oracle-11g-xe'][:oracle_rpm_path]} > #{node['oracle-11g-xe'][:oracle_log_file]}"
 	# notifies :run, "execute[configure-oracle]"
 	# not_if do
-	# 	File.exists?(node['oracle-11g-ee'][:oracle_daemon])
+	# 	File.exists?(node['oracle-11g-xe'][:oracle_daemon])
 	# end
-	not_if { File.exists?(node['oracle-11g-ee'][:oracle_daemon]) }
+	not_if { File.exists?(node['oracle-11g-xe'][:oracle_daemon]) }
 end

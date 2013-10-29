@@ -2,7 +2,7 @@
 
 XE =
   (DESCRIPTION =
-    (ADDRESS = (PROTOCOL = TCP)(HOST = <%= node['oracle-11g-ee'][:hostname] %>)(PORT = <%= node['oracle-11g-ee'][:oracle_http_port] %>))
+    (ADDRESS = (PROTOCOL = TCP)(HOST = <%= node['oracle-11g-xe'][:hostname] -%>)(PORT = <%= node['oracle-11g-xe'][:oracle_listener_port] -%>))
     (CONNECT_DATA =
       (SERVER = DEDICATED)
       (SERVICE_NAME = XE)

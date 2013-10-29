@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: oracle-11g-ee
+# Cookbook Name:: oracle-11g-xe
 # Recipe:: default
 #
 # Author:: Mike Ensor (<mike.ensor@acquitygroup.com>)
@@ -22,28 +22,28 @@
 
 ruby_block 'get-hostname' do
   block do
-    node.automatic['oracle-11g-ee'][:hostname] = `hostname`
+    node.automatic['oracle-11g-xe'][:hostname] = `hostname`
   end
   action :run
 end
 
 ruby_block 'get-host-only-ip-address' do
   block do
-    node.automatic['oracle-11g-ee'][:host_only_ip] = `ifconfig #{node['oracle-11g-ee'][:host_only_interface]} | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'`
+    node.automatic['oracle-11g-xe'][:host_only_ip] = `ifconfig #{node['oracle-11g-xe'][:host_only_interface]} | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'`
   end
   action :run
 end
 
-node.normal['oracle-11g-ee'][:iptables] = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'iptables_setup.sh').to_s
+node.normal['oracle-11g-xe'][:iptables] = (Pathname.new(node["oracle-11g-xe"][:temp_dir]) + 'iptables_setup.sh').to_s
 
-node.normal['oracle-11g-ee'][:xe_rsp] = (Pathname.new(node["oracle-11g-ee"][:temp_dir]) + 'xe.rsp').to_s
+node.normal['oracle-11g-xe'][:xe_rsp] = (Pathname.new(node["oracle-11g-xe"][:temp_dir]) + 'xe.rsp').to_s
 
-node.normal['oracle-11g-ee'][:oracle_logs_dir] = ((Pathname.new(node["oracle-11g-ee"][:temp_dir])) + '/xe_logs').to_s
-node.normal['oracle-11g-ee'][:oracle_log_file] = node['oracle-11g-ee'][:oracle_logs_dir] + '/XEsilentinstall.log'
+node.normal['oracle-11g-xe'][:oracle_logs_dir] = ((Pathname.new(node["oracle-11g-xe"][:temp_dir])) + '/xe_logs').to_s
+node.normal['oracle-11g-xe'][:oracle_log_file] = node['oracle-11g-xe'][:oracle_logs_dir] + '/XEsilentinstall.log'
 
-node.normal['oracle-11g-ee'][:oracle_rpm_path] = "#{Chef::Config[:file_cache_path]}/#{node['oracle-11g-ee'][:oracle_rpm_name]}"
+node.normal['oracle-11g-xe'][:oracle_rpm_path] = "#{Chef::Config[:file_cache_path]}/#{node['oracle-11g-xe'][:oracle_rpm_name]}"
 
 
-include_recipe "oracle-11g-ee::install"
-include_recipe "oracle-11g-ee::configure"
-include_recipe "oracle-11g-ee::remote_access"
+include_recipe "oracle-11g-xe::install"
+include_recipe "oracle-11g-xe::configure"
+include_recipe "oracle-11g-xe::remote_access"
