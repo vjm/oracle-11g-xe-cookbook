@@ -11,4 +11,4 @@ recipe "chef-oracle-11g-xe", "Includes the service recipe by default."
   supports os
 end
 
-depends "iptables"
+# depends "iptables"
