@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: oracle-11g-xe
-# Recipe:: default
+# Recipe:: prettify
 #
 # Author:: Mike Ensor (<mike.ensor@acquitygroup.com>)
 # Author:: Vince Montalbano (<vince.montalbano@acquitygroup.com>)
@@ -20,23 +20,26 @@
 # limitations under the License.
 #
 
-ruby_block 'get-hostname' do
-  block do
-    node.automatic['oracle-11g-xe'][:hostname] = `hostname`.delete("\n") # remove line ending
-  end
-  action :run
+bash_aliases = ((Pathname.new(node["oracle-11g-xe"][:temp_dir])) + '/bash-aliases').to_s
+
+bashrc = "/etc/bashrc"
+file bashrc do
+	owner "root"
+	group "root"
+	mode "0755"
+	action :create_if_missing
 end
 
-ruby_block 'get-host-only-ip-address' do
-  block do
-    node.automatic['oracle-11g-xe'][:host_only_ip] = `ifconfig #{node['oracle-11g-xe'][:host_only_interface]} | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'`
-  end
-  action :run
+cookbook_file bash_aliases do
+  source "bash-aliases"
+  mode 0600
+  owner "root"
+  group "root"
+  action :create_if_missing
+  notifies :run, "execute[append-bash-aliases]", :immediately
 end
 
-
-include_recipe "oracle-11g-xe::prettify"
-
-include_recipe "oracle-11g-xe::install"
-include_recipe "oracle-11g-xe::configure"
-include_recipe "oracle-11g-xe::remote_access"
+execute "append-bash-aliases" do
+	user "root"
+	command "cat #{bash_aliases} >> #{bashrc}"
+end

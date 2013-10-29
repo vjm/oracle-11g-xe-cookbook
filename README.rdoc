@@ -1,21 +1,12 @@
 = DESCRIPTION:
 
-there is a default listener : /u01/app/oracle/product/11.2.0/xe/network/admin
-
 = REQUIREMENTS:
-
 
 = ATTRIBUTES: 
 
 = USAGE:
 
 = TODO:
---set iptables port access rather than allowing all connections
---manage the entire listener and tnsnames, and use the ip of the machine instead of "localhost", otherwise remote access doesn't seem to work.
--- "No such file or directory - lsnrctl start" because environment variables aren't getting set correctly. we also need to run this as the oracle user. http://docs.oracle.com/cd/E17781_01/install.112/e18802/toc.htm#autoId17
--- "sqlplus: command not found" because environment variables aren't getting set correctly. see above
-
--- better chaining and notifications within the provisioning. we should be able to run vagrant provision as many times as we want and be fresh.
 
 = LINKS:
 
@@ -25,14 +16,6 @@ http://www.thegeekstuff.com/2009/05/oracle-lsnrctl-listener-shutdown-and-startup
 
 http://docs.oracle.com/cd/E17781_01/install.112/e18802/toc.htm#BABCCGCF
 
-http://pravejay.wordpress.com/2011/08/09/oracle-got-minus-one-from-a-read-call-how-to-tackle/
-
 http://docs.oracle.com/cd/B19306_01/network.102/b14212/connect.htm
 
-https://forums.oracle.com/thread/522405
-
-http://www.dba-oracle.com/t_create_sqlnet_ora.htm
-
 http://www.oracle.com/technetwork/community/developer-vm/index.html
-
-http://www.onlineconversion.com/html_chmod_calculator.htm
