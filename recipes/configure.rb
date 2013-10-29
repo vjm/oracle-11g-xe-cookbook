@@ -31,16 +31,16 @@ execute 'configure-oracle' do
 	returns [0,1] # don't care if it's already configured
 end
 
-link "/etc/rc.d/rc3.d/S99oracle" do
-	user 'root'
-	to node["oracle-11g-xe"][:oracle_env_path]
-	# action :nothing
-	notifies :delete, "template[#{node['oracle-11g-xe'][:listener_ora]}]"
-	notifies :delete, "template[#{node['oracle-11g-xe'][:tnsnames_ora]}]"
-	notifies :create, "template[#{node['oracle-11g-xe'][:listener_ora]}]"
-	notifies :create, "template[#{node['oracle-11g-xe'][:tnsnames_ora]}]"
-	# notifies :run, "execute[start-listener]" #seems like it's already started now
-end
+# link "/etc/rc.d/rc3.d/S99oracle" do
+# 	user 'root'
+# 	to node["oracle-11g-xe"][:oracle_env_path]
+# 	# action :nothing
+# 	notifies :delete, "template[#{node['oracle-11g-xe'][:listener_ora]}]", :immediately
+# 	notifies :delete, "template[#{node['oracle-11g-xe'][:tnsnames_ora]}]", :immediately
+# 	notifies :create, "template[#{node['oracle-11g-xe'][:listener_ora]}]", :immediately
+# 	notifies :create, "template[#{node['oracle-11g-xe'][:tnsnames_ora]}]", :immediately
+# 	# notifies :run, "execute[start-listener]" #seems like it's already started now
+# end
 
 template node['oracle-11g-xe'][:listener_ora] do
   action :create

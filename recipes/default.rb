@@ -22,7 +22,7 @@
 
 ruby_block 'get-hostname' do
   block do
-    node.automatic['oracle-11g-xe'][:hostname] = `hostname`
+    node.automatic['oracle-11g-xe'][:hostname] = `hostname`.delete("\n")
   end
   action :run
 end
