@@ -1,14 +1,22 @@
-= DESCRIPTION:
+# . cookbook
 
-= REQUIREMENTS:
+# Requirements
 
-= ATTRIBUTES: 
+# Usage
 
-= USAGE:
+# Attributes
 
-= TODO:
+# Recipes
 
-= LINKS:
+# Author
+
+Author:: Vince Montalbano (<Vince.Montalbano@acquitygroup.com>)
+
+# TODO
+
+There is a better way to do the hostname grabs. Look into Ohai
+
+# LINKS
 
 http://www.thegeekstuff.com/2009/01/oracle-database-startup-and-shutdown-procedure/
 
